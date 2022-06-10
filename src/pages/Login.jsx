@@ -1,8 +1,15 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
+import { login } from "../Store/Auth/auth.action";
 
 const Login = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { isAuth } = useSelector((state) => state.auth);
+
   const [loginCreds, setLoginCreds] = useState({
     email: "eve.holt@reqres.in",
     password: "cityslicka",
@@ -18,9 +25,14 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // TODO
-    navigate("/");
+    dispatch(login(loginCreds));
   };
+
+  useEffect(() => {
+    if (isAuth) {
+      navigate(location.state.pathname || "/", { replace: true });
+    }
+  }, [isAuth]);
 
   return (
     <div>
